@@ -6,6 +6,7 @@
 #   source code submission and distribution.
 # - JAVAFILES is all of the Java files in the project, including test cases and
 #   build tools.
+# tst
 
 PACKAGES = rmi
 ARCHIVE = project1.zip
