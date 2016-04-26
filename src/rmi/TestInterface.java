@@ -1,5 +1,5 @@
 package rmi;
 
 public interface TestInterface {
-	public long getPID(int v) throws RMIException;
+	public Long getPID(Integer v) throws RMIException;
 }

@@ -17,7 +17,6 @@ public class ServiceThread<T> implements Runnable{
         this.clientSocket = clientSocket;
         this.obj = obj;
         this.skeleton = skeleton;
-        
     }
 
     /**
@@ -30,17 +29,19 @@ public class ServiceThread<T> implements Runnable{
         	log("New connection with client at " + clientSocket);
             ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
 
-            String methodName = (String)in.readObject();
-            // TODO
-            Method method = null;
-            Object[] args = new Object[(Integer)in.readObject()];
-            for(int i = 0; i < args.length; i++) args[i] = (Object) in.readObject();
+            String methodName = (String) in.readObject();
+            int argsLen = (Integer)in.readObject();
+            Object[] args = new Object[argsLen];
+            Class[] argsTypes = new Class[argsLen];
+            for(int i = 0; i < args.length; i++) {
+            	args[i] = (Object) in.readObject();
+            	argsTypes[i] = (Class) args[i].getClass();
+            }
             
             System.out.println("Read objects on server side");
-            
+            Method method = obj.getClass().getMethod(methodName, (Class<?>[]) argsTypes);
             Object retObj = method.invoke(obj, args);
             // call the object with method and find result
-            
             
             ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
           
@@ -56,6 +57,10 @@ public class ServiceThread<T> implements Runnable{
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		} catch (SecurityException e) {
 			e.printStackTrace();
 		} finally {
             try {

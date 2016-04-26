@@ -1,6 +1,7 @@
 package rmi;
 
 import java.net.InetSocketAddress;
+import java.rmi.server.UnicastRemoteObject;
 
 public class NetworkTest {
 	
@@ -8,17 +9,17 @@ public class NetworkTest {
 	private class Server implements TestInterface {
 
 		@Override
-		public long getPID(int v) throws RMIException {
+		public Long getPID(Integer v) throws RMIException {
 			System.out.println("Got value " + v);
 			long id = Thread.currentThread().getId();
 			return id;
 		}
 		
 	}
+	
 	public void test() throws RMIException{
 		
 		InetSocketAddress address = new InetSocketAddress("localhost", 9000);
-		
 		// creating remote obj and skeleton
 		TestInterface obj = new Server();
 		Skeleton<TestInterface> skeleton = new Skeleton<TestInterface>(TestInterface.class, obj, address);
@@ -30,6 +31,8 @@ public class NetworkTest {
 		System.out.println("Client's pid = " + Thread.currentThread().getId());
 		long val = client.getPID(123);
 		System.out.println(val);
+		
+		skeleton.stop();
 	}
 	
 	public static void main(String args[]) throws Exception{

@@ -39,7 +39,8 @@ public class StubInvocationHandler implements InvocationHandler {
         try {
         	ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             
-            out.writeObject(method.getName());
+        	String methodName = method.getName();
+            out.writeObject(methodName);
             out.writeObject(Integer.valueOf(args.length));
             for(Object arg : args) out.writeObject(arg);
             System.out.println("Wrote objects on client side");
