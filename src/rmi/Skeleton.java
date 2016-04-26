@@ -56,6 +56,7 @@ public class Skeleton<T>
     	if (c == null || server == null) {
             throw new NullPointerException("Parameter c or server is null");
         }
+    	
 
     	if(!Helper.isRemoteInterface(c)) throw new Error(c.getName() + "is not a remote interface");
     	

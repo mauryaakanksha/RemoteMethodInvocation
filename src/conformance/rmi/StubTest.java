@@ -77,6 +77,7 @@ public class StubTest extends Test
     @Override
     protected void perform() throws TestFailed
     {
+    	System.out.println("Test 0");
         ensureUnknownHostRejected();
 
         try
@@ -87,14 +88,19 @@ public class StubTest extends Test
         {
             throw new TestFailed("unable to start dummy skeleton", t);
         }
-
+        
+        System.out.println("Test 1");
         ensureClassRejected();
+        System.out.println("Test 2");
         ensureNonRemoteInterfaceRejected();
+        System.out.println("Test 3");
         ensureNullPointerExceptions();
+        System.out.println("Test 4");
         ensureLocalMethods();
 
         skeleton.stop();
-
+        
+        System.out.println("Test 5");
         ensureStubConnects();
     }
 
