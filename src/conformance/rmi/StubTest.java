@@ -181,7 +181,8 @@ public class StubTest extends Test
     {
         try
         {
-            TestInterface   stub = Stub.create(TestInterface.class, skeleton);
+            TestInterface   stub = null;
+            stub = Stub.create(TestInterface.class, skeleton);
             throw new TestFailed("Stub.create(Class<T>, Skeleton<T>) allowed " +
                                  "stub to be created from skeleton with " +
                                  "unassigned address");

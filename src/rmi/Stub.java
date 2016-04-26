@@ -20,7 +20,7 @@ import java.lang.reflect.Proxy;
  */
 public abstract class Stub
 {
-    /** Creates a stub, given a skeleton with an assigned adress.
+    /** Creates a stub, given a skeleton with an assigned address.
 
         <p>
         The stub is assigned the address of the skeleton. The skeleton must
@@ -52,6 +52,9 @@ public abstract class Stub
         throws UnknownHostException
     {
         //throw new UnsupportedOperationException("not implemented");
+    	if(skeleton.tcpserver == null) {
+    		throw new IllegalStateException();
+    	}
     	InvocationHandler handler = new StubInvocationHandler(skeleton.getAddress());
         T instance = (T) Proxy.newProxyInstance(c.getClassLoader(), new Class[] {c}, handler);
         return instance;

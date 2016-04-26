@@ -87,8 +87,8 @@ public class Skeleton<T>
     {
         //throw new UnsupportedOperationException("not implemented");
     	
-    	if (c == null || server == null) {
-            throw new NullPointerException("Parameter c or server is null");
+    	if (c == null || server == null || address == null) {
+            throw new NullPointerException("Parameter c or server or address is null");
         }
 
     	if(!Helper.isRemoteInterface(c)) throw new Error(c.getName() + "is not a remote interface");
@@ -118,6 +118,7 @@ public class Skeleton<T>
      */
     protected void stopped(Throwable cause)
     {
+    	tcpserver = null;
     }
 
     /** Called when an exception occurs at the top level in the listening
@@ -167,8 +168,13 @@ public class Skeleton<T>
     public synchronized void start() throws RMIException
     {
         //throw new UnsupportedOperationException("not implemented");
-    	int port = 9000;
-    	if(this.address != null) port = this.address.getPort();
+    	
+    	
+    	if(tcpserver != null) throw new RMIException("server has already started");
+    	
+    	int port = 8080;
+    	if(this.address != null) port = this.address.getPort(); 
+
     	tcpserver = new ListeningThread(port, obj, this);
     	new Thread(tcpserver).start();
     }
