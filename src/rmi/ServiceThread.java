@@ -30,7 +30,9 @@ public class ServiceThread<T> implements Runnable{
         	log("New connection with client at " + clientSocket);
             ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
 
-            Method method = (Method) in.readObject();
+            String methodName = (String)in.readObject();
+            // TODO
+            Method method = null;
             Object[] args = new Object[(Integer)in.readObject()];
             for(int i = 0; i < args.length; i++) args[i] = (Object) in.readObject();
             

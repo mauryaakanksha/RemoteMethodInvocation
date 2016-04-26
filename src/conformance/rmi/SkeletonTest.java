@@ -59,7 +59,7 @@ public class SkeletonTest extends Test
         System.out.println("Test 3");
         ensureNullPointerExceptions();
         System.out.println("Test 4");
-        //ensureSkeletonRuns();
+        ensureSkeletonRuns();
     }
 
     /** Performs tests with a running skeleton.

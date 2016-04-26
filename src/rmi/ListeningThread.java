@@ -55,6 +55,7 @@ public class ListeningThread<T> implements Runnable{
         this.isStopped = true;
         try {
             this.serverSocket.close();
+            
         } catch (IOException e) {
             throw new RuntimeException("Error closing server", e);
         }
