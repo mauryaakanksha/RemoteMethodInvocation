@@ -1,7 +1,6 @@
 package rmi;
 
 import java.net.*;
-import rmi.proxy.StubInvocationHandler;
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;

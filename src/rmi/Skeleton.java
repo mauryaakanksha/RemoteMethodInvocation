@@ -1,10 +1,6 @@
 package rmi;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
-import java.net.Socket;
 
 /** RMI skeleton
 
@@ -52,6 +48,7 @@ public class Skeleton<T>
 	
 	T obj;
 	InetSocketAddress address;
+	ListeningThread<T> tcpserver;
 	
     public Skeleton(Class<T> c, T server)
     {
@@ -169,7 +166,10 @@ public class Skeleton<T>
     public synchronized void start() throws RMIException
     {
         //throw new UnsupportedOperationException("not implemented");
-    	
+    	int port = 9000;
+    	if(this.address != null) port = this.address.getPort();
+    	tcpserver = new ListeningThread(port, obj, this);
+    	new Thread(tcpserver).start();
     }
 
     /** Stops the skeleton server, if it is already running.
@@ -183,7 +183,8 @@ public class Skeleton<T>
      */
     public synchronized void stop()
     {
-        throw new UnsupportedOperationException("not implemented");
+    	tcpserver.stop();
+        //throw new UnsupportedOperationException("not implemented");
     }
 
 	public T getObj() {

@@ -32,7 +32,7 @@ public class ConformanceTests
         
         
         Series                      series = new Series(tests);
-        SeriesReport                report = series.run(3, System.out);
+        SeriesReport                report = series.run(30000, System.out);
 
         // Print the report and exit with an appropriate exit status.
         report.print(System.out);

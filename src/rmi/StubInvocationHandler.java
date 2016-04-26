@@ -1,4 +1,4 @@
-package rmi.proxy;
+package rmi;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -40,12 +40,15 @@ public class StubInvocationHandler implements InvocationHandler {
         	ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             
             out.writeObject(method);
-            out.writeObject(args);
+            out.writeObject(Integer.valueOf(args.length));
+            for(Object arg : args) out.writeObject(arg);
+            System.out.println("Wrote objects on client side");
+            
 
             ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
             retVal = in.readObject();
+            System.out.println("Got result on client side");
             return retVal;
-        
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
