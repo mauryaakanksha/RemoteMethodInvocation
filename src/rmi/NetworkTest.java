@@ -25,9 +25,10 @@ public class NetworkTest {
 		Skeleton<TestInterface> skeleton = new Skeleton<TestInterface>(TestInterface.class, obj, address);
 		skeleton.start();
 		
+		
 		// creating client stub
 		TestInterface client = Stub.create(TestInterface.class, address);
-		
+		System.out.println("tostring = " + client.toString());
 		System.out.println("Client's pid = " + Thread.currentThread().getId());
 		long val = client.getPID(123);
 		System.out.println(val);

@@ -52,10 +52,15 @@ public abstract class Stub
         throws UnknownHostException
     {
         //throw new UnsupportedOperationException("not implemented");
+    	
+    	if(skeleton == null || c == null) throw new NullPointerException();
     	if(skeleton.tcpserver == null) {
-    		throw new IllegalStateException();
+    		throw new IllegalStateException("Skeleton doesn't have an address yet");
     	}
-    	InvocationHandler handler = new StubInvocationHandler(skeleton.getAddress());
+    	if(!c.isInterface()) throw new Error(c.getName() + " is not an interface");
+    	if(!Helper.isRemoteInterface(c)) throw new Error(c.getName() + " is not a remote interface");
+    	
+    	InvocationHandler handler = new StubInvocationHandler(c, skeleton.getAddress());
         T instance = (T) Proxy.newProxyInstance(c.getClassLoader(), new Class[] {c}, handler);
         return instance;
     }
@@ -94,8 +99,15 @@ public abstract class Stub
                                String hostname)
     {
         //throw new UnsupportedOperationException("not implemented");
+    	if(skeleton == null || c == null || hostname == null) throw new NullPointerException();
+    	if(skeleton.tcpserver == null) {
+    		throw new IllegalStateException("Skeleton doesn't have an address yet");
+    	}
+    	if(!c.isInterface()) throw new Error(c.getName() + " is not an interface");
+    	if(!Helper.isRemoteInterface(c)) throw new Error(c.getName() + " is not a remote interface");
+    	
     	InetSocketAddress addr = new InetSocketAddress(hostname, skeleton.getAddress().getPort());
-    	InvocationHandler handler = new StubInvocationHandler(addr);
+    	InvocationHandler handler = new StubInvocationHandler(c, addr);
         T instance = (T) Proxy.newProxyInstance(c.getClassLoader(), new Class[] { c }, handler);
         return instance;
     }
@@ -120,7 +132,11 @@ public abstract class Stub
     public static <T> T create(Class<T> c, InetSocketAddress address)
     {
         //throw new UnsupportedOperationException("not implemented");
-    	 InvocationHandler handler = new StubInvocationHandler(address);
+    	if(address == null || c == null) throw new NullPointerException();
+    	if(!c.isInterface()) throw new Error(c.getName() + " is not an interface");
+    	if(!Helper.isRemoteInterface(c)) throw new Error(c.getName() + " is not a remote interface");
+    	
+    	 InvocationHandler handler = new StubInvocationHandler(c, address);
          T instance = (T) Proxy.newProxyInstance(c.getClassLoader(), new Class[] { c }, handler);
          return instance;
     }

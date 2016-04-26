@@ -2,6 +2,8 @@ package rmi;
 
 import java.net.InetSocketAddress;
 
+import javax.swing.plaf.InsetsUIResource;
+
 /** RMI skeleton
 
     <p>
@@ -118,7 +120,7 @@ public class Skeleton<T>
      */
     protected void stopped(Throwable cause)
     {
-    	tcpserver = null;
+    
     }
 
     /** Called when an exception occurs at the top level in the listening
@@ -173,8 +175,10 @@ public class Skeleton<T>
     	if(tcpserver != null) throw new RMIException("server has already started");
     	
     	int port = 8080;
-    	if(this.address != null) port = this.address.getPort(); 
-
+    	if(this.address != null) 
+    		port = this.address.getPort(); 
+    	else 
+    		this.address = new InetSocketAddress(port);
     	tcpserver = new ListeningThread(port, obj, this);
     	new Thread(tcpserver).start();
     }
@@ -191,6 +195,7 @@ public class Skeleton<T>
     public synchronized void stop()
     {
     	tcpserver.stop();
+    	// tcpserver = null;
         //throw new UnsupportedOperationException("not implemented");
     }
 
