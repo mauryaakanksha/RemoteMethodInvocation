@@ -1,10 +1,12 @@
 package rmi.proxy;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.net.*;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 
 /**
  * Invocation handler for the client proxy class
@@ -15,40 +17,46 @@ public class StubInvocationHandler implements InvocationHandler {
      * Server socket address (hostname, port)
      */
 	
-    private InetAddress serverAddr;
-    private int serverPort;
-    private String serverHostName;
-	private Socket socket;
+    private InetSocketAddress serverAddr;
 	
-	public StubInvocationHandler(InetAddress address, int port) {
+	public StubInvocationHandler(InetSocketAddress address) {
 	    this.serverAddr = address;
-	    this.serverPort = port;
-	    this.serverHostName = "";
 	}
 	
-    public StubInvocationHandler(InetAddress address, int port, String hostName) {
-        this.serverAddr = address;
-        this.serverPort = port;
-        this.serverHostName = hostName;
-    }
-    
     
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        if (serverHostName.isEmpty()) {
-        	socket = new Socket(serverAddr , serverPort);
-        } else {
-        	socket = new Socket(serverHostName, serverPort);
-        }
         
-        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-        ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+        Socket socket = null;
+        
+        if(serverAddr.getHostName() == null)
+        	socket = new Socket(serverAddr.getAddress(), serverAddr.getPort());
+        else 
+        	socket = new Socket(serverAddr.getHostName(), serverAddr.getPort());
+        
+        Object retVal = null;
+        
+        try {
+        	ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            
+            out.writeObject(method);
+            out.writeObject(args);
 
-        out.writeObject(method);
-        out.writeObject(args);
-
-        Object retVal = in.readObject();
-
+            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+            retVal = in.readObject();
+            return retVal;
+        
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+		    try {
+		        socket.close();
+		    } catch (IOException e) {
+		        System.out.println("Couldn't close a socket, what's going on?");
+		    }
+		}
+        
         return retVal;
+        
     }
 }

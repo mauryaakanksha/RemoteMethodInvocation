@@ -1,8 +1,10 @@
 package rmi;
 
-import java.net.*;
 import java.io.IOException;
-import java.lang.reflect.Method;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 
 /** RMI skeleton
 
@@ -47,6 +49,10 @@ public class Skeleton<T>
         @throws NullPointerException If either of <code>c</code> or
                                      <code>server</code> is <code>null</code>.
      */
+	
+	T obj;
+	InetSocketAddress address;
+	
     public Skeleton(Class<T> c, T server)
     {
         //throw new UnsupportedOperationException("not implemented");
@@ -54,15 +60,11 @@ public class Skeleton<T>
             throw new NullPointerException("Parameter c or server is null");
         }
 
-        Method[] methods = c.getMethods();
-        for (Method method : methods) {
-            Class<?>[] exceptions = method.getExceptionTypes();
-            for (Class<?> exception : exceptions) {
-                if (!exception.getName().equals(RMIException.class.getName())) {
-                    throw new Error("Not a remote interface");
-                }
-            }
-        }
+    	if(!Helper.isRemoteInterface(c)) throw new Error(c.getName() + "is not a remote interface");
+    	
+    	
+    	this.obj = server;
+      
     }
 
     /** Creates a <code>Skeleton</code> with the given initial server address.
@@ -86,19 +88,16 @@ public class Skeleton<T>
     public Skeleton(Class<T> c, T server, InetSocketAddress address)
     {
         //throw new UnsupportedOperationException("not implemented");
+    	
     	if (c == null || server == null) {
             throw new NullPointerException("Parameter c or server is null");
         }
 
-        Method[] methods = c.getMethods();
-        for (Method method : methods) {
-            Class<?>[] exceptions = method.getExceptionTypes();
-            for (Class<?> exception : exceptions) {
-                if (!exception.getName().equals(RMIException.class.getName())) {
-                    throw new Error("Not a remote interface");
-                }
-            }
-        }
+    	if(!Helper.isRemoteInterface(c)) throw new Error(c.getName() + "is not a remote interface");
+    	
+    	this.obj = server;
+    	this.address = address;
+
     }
 
     /** Called when the listening thread exits.
@@ -169,7 +168,8 @@ public class Skeleton<T>
      */
     public synchronized void start() throws RMIException
     {
-        throw new UnsupportedOperationException("not implemented");
+        //throw new UnsupportedOperationException("not implemented");
+    	
     }
 
     /** Stops the skeleton server, if it is already running.
@@ -185,17 +185,22 @@ public class Skeleton<T>
     {
         throw new UnsupportedOperationException("not implemented");
     }
+
+	public T getObj() {
+		return obj;
+	}
+
+	public void setObj(T obj) {
+		this.obj = obj;
+	}
+
+	public InetSocketAddress getAddress() {
+		return address;
+	}
+
+	public void setAddress(InetSocketAddress address) {
+		this.address = address;
+	}
     
-    public InetAddress getServerAddress()
-    {
-    	InetAddress address = null;
-    	return address;
-    }
-    
-    public int getServerPort()
-    {
-    	int port =0;
-    	return port;
-    }
     
 }

@@ -53,8 +53,8 @@ public abstract class Stub
         throws UnknownHostException
     {
         //throw new UnsupportedOperationException("not implemented");
-    	InvocationHandler handler = new StubInvocationHandler(skeleton.getServerAddress(), skeleton.getServerPort());
-        T instance = (T) Proxy.newProxyInstance(c.getClassLoader(), new Class[] { c }, handler);
+    	InvocationHandler handler = new StubInvocationHandler(skeleton.getAddress());
+        T instance = (T) Proxy.newProxyInstance(c.getClassLoader(), new Class[] {c}, handler);
         return instance;
     }
 
@@ -92,7 +92,8 @@ public abstract class Stub
                                String hostname)
     {
         //throw new UnsupportedOperationException("not implemented");
-    	InvocationHandler handler = new StubInvocationHandler(skeleton.getServerAddress(), skeleton.getServerPort(), hostname);
+    	InetSocketAddress addr = new InetSocketAddress(hostname, skeleton.getAddress().getPort());
+    	InvocationHandler handler = new StubInvocationHandler(addr);
         T instance = (T) Proxy.newProxyInstance(c.getClassLoader(), new Class[] { c }, handler);
         return instance;
     }
@@ -117,7 +118,7 @@ public abstract class Stub
     public static <T> T create(Class<T> c, InetSocketAddress address)
     {
         //throw new UnsupportedOperationException("not implemented");
-    	 InvocationHandler handler = new StubInvocationHandler(address.getAddress(), address.getPort());
+    	 InvocationHandler handler = new StubInvocationHandler(address);
          T instance = (T) Proxy.newProxyInstance(c.getClassLoader(), new Class[] { c }, handler);
          return instance;
     }
