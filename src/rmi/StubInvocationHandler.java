@@ -88,6 +88,7 @@ public class StubInvocationHandler implements InvocationHandler {
             System.out.println("Got result on client side");
             return retVal;
 		} catch (Exception e) {
+			// TODO ensureStubConnects() -- check what's the error if you don't throw RMI exception
 			throw new RMIException(e);
 			//e.printStackTrace();
 		} finally {

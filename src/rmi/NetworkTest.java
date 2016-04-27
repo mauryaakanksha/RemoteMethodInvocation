@@ -19,6 +19,7 @@ public class NetworkTest {
 	
 	public void test() throws RMIException{
 		
+		
 		InetSocketAddress address = new InetSocketAddress("localhost", 9000);
 		// creating remote obj and skeleton
 		TestInterface obj = new Server();
@@ -28,7 +29,7 @@ public class NetworkTest {
 		
 		// creating client stub
 		TestInterface client = Stub.create(TestInterface.class, address);
-		System.out.println("tostring = " + client.toString());
+		System.out.println("toString = " + client.toString());
 		System.out.println("Client's pid = " + Thread.currentThread().getId());
 		long val = client.getPID(123);
 		System.out.println(val);

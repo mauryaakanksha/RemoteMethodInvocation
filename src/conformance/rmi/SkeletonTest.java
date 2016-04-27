@@ -91,6 +91,7 @@ public class SkeletonTest extends Test
 			e1.printStackTrace();
 		}
         
+        /* ------------- */
         
         if(!probe())
             throw new TestFailed("skeleton refuses connections after start");
