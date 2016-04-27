@@ -132,13 +132,13 @@ public abstract class Stub
     public static <T> T create(Class<T> c, InetSocketAddress address)
     {
         //throw new UnsupportedOperationException("not implemented");
-    	if(address == null || c == null) throw new NullPointerException();
-    	if(!c.isInterface()) throw new Error(c.getName() + " is not an interface");
-    	if(!Helper.isRemoteInterface(c)) throw new Error(c.getName() + " is not a remote interface");
-    	
-    	 InvocationHandler handler = new StubInvocationHandler(c, address);
-         T instance = (T) Proxy.newProxyInstance(c.getClassLoader(), new Class[] { c }, handler);
-         return instance;
+		if(address == null || c == null) throw new NullPointerException();
+		if(!c.isInterface()) throw new Error(c.getName() + " is not an interface");
+		if(!Helper.isRemoteInterface(c)) throw new Error(c.getName() + " is not a remote interface");
+
+		 InvocationHandler handler = new StubInvocationHandler(c, address);
+	     T instance = (T) Proxy.newProxyInstance(c.getClassLoader(), new Class[] { c }, handler);
+	     return instance;
     }
     
     public static void main(String[] args) throws IOException {

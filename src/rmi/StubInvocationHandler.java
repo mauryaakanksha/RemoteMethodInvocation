@@ -30,14 +30,12 @@ public class StubInvocationHandler implements InvocationHandler {
     
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-    	
-    	System.out.println(c);
-    	System.out.println(serverAddr);
-    	
-    	Field addrField 	 = c.getField("serverAddr");
-    	Field interfaceField = c.getField("c");
-    	
-    	if(method.getName().equalsIgnoreCase("toString") && args.length == 0) {
+        
+    	if(method.getName().equalsIgnoreCase("getServerAddr")) {
+    		return serverAddr;
+    	} else if(method.getName().equalsIgnoreCase("getC")){
+    		return c;
+    	} else if(method.getName().equalsIgnoreCase("toString") && args.length == 0) {
     		return "Interface name = " + c.toString() + ", Skeleton address =  " + serverAddr.toString() + "\n"; 
     	} else if(method.getName().equalsIgnoreCase("hashCode") && args.length == 0) {
     		
@@ -52,15 +50,14 @@ public class StubInvocationHandler implements InvocationHandler {
     		if(!ob.getClass().equals(c)) return false;
     		
     		
+    		Field addrField = c.getField("serverAddr");
+    		Method meth = ob.getClass().getMethod("equals", Object.class);
+    		InetSocketAddress add1 = (InetSocketAddress) addrField.get(c.cast(ob)); 
+    		if(!add1.equals(serverAddr)) return false;
     		
-    		InetSocketAddress add1 = (InetSocketAddress) addrField.get(c.cast(ob));
-    		InetSocketAddress add2 = (InetSocketAddress) addrField.get(c.cast(proxy));
-    		if(!add1.equals(add2)) return false;
-    		
-    		
+    		Field interfaceField = c.getField("c");
     		Class c1 = (Class) interfaceField.get(c.cast(ob));
-    		Class c2 = (Class) interfaceField.get(c.cast(proxy));
-    	    if(!c1.equals(c2)) return false;
+    	    if(!c1.equals(c)) return false;
     	    
     	    return true;
     	}
