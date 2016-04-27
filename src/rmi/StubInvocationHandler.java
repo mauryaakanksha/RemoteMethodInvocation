@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
@@ -26,6 +27,9 @@ public class StubInvocationHandler implements InvocationHandler {
 	    this.c = c;
 	}
 	
+	public Class<?> getClassObj() {
+		return c;
+	}
 	
     
     @Override
@@ -47,9 +51,24 @@ public class StubInvocationHandler implements InvocationHandler {
     	}else if(method.getName().equalsIgnoreCase("equals") && args.length == 1) {
     		Object ob = args[0];
     		if(ob == null) return false;
-    		if(!ob.getClass().equals(c)) return false;
+    		InvocationHandler handler = Proxy.getInvocationHandler(ob);
+    		if( handler instanceof StubInvocationHandler) {
+    			StubInvocationHandler stubHandler = (StubInvocationHandler) handler;
+    			
+    			if ( !stubHandler.c.equals(c) ) {
+    				return false;
+    			}
+    			
+    			if ( !stubHandler.serverAddr.equals(serverAddr)){
+    				return false;
+    			}
+    			return true;
+    		}
+    	   
+    	    return false;
+    		//if(!ob.getClass().equals(c)) return false;
     		
-    		
+    		/*
     		Field addrField = c.getField("serverAddr");
     		Method meth = ob.getClass().getMethod("equals", Object.class);
     		InetSocketAddress add1 = (InetSocketAddress) addrField.get(c.cast(ob)); 
@@ -60,6 +79,7 @@ public class StubInvocationHandler implements InvocationHandler {
     	    if(!c1.equals(c)) return false;
     	    
     	    return true;
+    	    */
     	}
     	
         Socket socket = null;
