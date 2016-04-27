@@ -32,10 +32,9 @@ public class ServiceThread<T> implements Runnable{
             String methodName = (String) in.readObject();
             int argsLen = (Integer)in.readObject();
             Object[] args = new Object[argsLen];
-            Class[] argsTypes = new Class[argsLen];
+            Class<?>[] argsTypes = new Class[argsLen];
             for(int i = 0; i < args.length; i++) {
-            	args[i] = (Object) in.readObject();
-            	argsTypes[i] = getOrigClass(args[i].getClass());
+            	argsTypes[i] = (Class<?>)in.readObject();
             }
             
             log("Read objects on server side");
