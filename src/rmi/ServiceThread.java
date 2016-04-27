@@ -35,7 +35,7 @@ public class ServiceThread<T> implements Runnable{
             Class[] argsTypes = new Class[argsLen];
             for(int i = 0; i < args.length; i++) {
             	args[i] = (Object) in.readObject();
-            	argsTypes[i] = (Class) args[i].getClass();
+            	argsTypes[i] = getOrigClass(args[i].getClass());
             }
             
             System.out.println("Read objects on server side");
@@ -72,6 +72,18 @@ public class ServiceThread<T> implements Runnable{
         }
     }
 
+    private Class getOrigClass(Class t) {
+    	switch (t.getName()) {
+    		case "java.lang.Byte" : return byte.class; 
+    		case "java.lang.Short" : return short.class;
+    		case "java.lang.Integer" : return int.class;
+    		case "java.lang.Float" : return float.class;
+    		case "java.lang.Double" : return double.class;
+    		case "java.lang.Character" : return char.class;
+    		case "java.lang.Boolean" : return boolean.class;
+    		default: return t;
+    	}
+    }
     /**
      * Logs a simple message.  In this case we just write the
      * message to the server applications standard output.

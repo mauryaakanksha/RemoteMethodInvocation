@@ -5,11 +5,18 @@ import java.rmi.server.UnicastRemoteObject;
 
 public class NetworkTest {
 	
+	public void tes(int v) {
+		System.out.println("Primitive");
+	}
+	
+	public void tes(Integer v) {
+		System.out.println("Boxed");
+	}
 	
 	private class Server implements TestInterface {
 
 		@Override
-		public Long getPID(Integer v) throws RMIException {
+		public long getPID(int v) throws RMIException {
 			System.out.println("Got value " + v);
 			long id = Thread.currentThread().getId();
 			return id;
@@ -19,6 +26,11 @@ public class NetworkTest {
 	
 	public void test() throws RMIException{
 		
+		Integer v = 2;
+		int x =4;
+		
+		tes(1);
+		tes(v);
 		
 		InetSocketAddress address = new InetSocketAddress("localhost", 9000);
 		// creating remote obj and skeleton
