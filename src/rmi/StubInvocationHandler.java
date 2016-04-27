@@ -72,6 +72,7 @@ public class StubInvocationHandler implements InvocationHandler {
         	socket = new Socket(serverAddr.getHostName(), serverAddr.getPort());
         
         Object retVal = null;
+        Throwable serverException = null;
         
         try {
         	ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
@@ -85,12 +86,16 @@ public class StubInvocationHandler implements InvocationHandler {
             for ( int i = 0; i< args.length ; i++) {
             	out.writeObject(args[i]);
             }
-            System.out.println("Wrote objects on client side");
+            log("Wrote objects on client side");
             
 
             ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
             retVal = in.readObject();
-            System.out.println("Got result on client side");
+            serverException = (Throwable) in.readObject();
+            log("Got result on client side");
+            
+            if (serverException != null)
+            	throw serverException;
             return retVal;
 		} catch (Exception e) {
 			// TODO ensureStubConnects() -- check what's the error if you don't throw RMI exception
@@ -100,9 +105,14 @@ public class StubInvocationHandler implements InvocationHandler {
 		    try {
 		        socket.close();
 		    } catch (IOException e) {
-		        System.out.println("Couldn't close a socket, what's going on?");
+		        log("Couldn't close a socket, what's going on?");
 		    }
 		}
         
+    }
+    
+    
+    private void log(String message) {
+    	         System.out.println("C: " + message);
     }
 }

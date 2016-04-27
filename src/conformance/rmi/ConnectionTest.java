@@ -49,6 +49,8 @@ public class ConnectionTest extends Test
     @Override
     protected void perform() throws TestFailed
     {
+    	System.out.println("Starting ConnectionTest");
+    	
         // Create two stubs - one using the skeleton, and one by specifying the
         // address explicitly. Make sure both can connect to the skeleton and
         // communicate with it correctly.
@@ -84,6 +86,8 @@ public class ConnectionTest extends Test
         testStub(stub_explicit);
 
         task();
+        
+        System.out.println("ConnectionTest finished");
     }
 
     /** Stops the skeleton server. */
