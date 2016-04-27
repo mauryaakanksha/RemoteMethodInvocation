@@ -51,6 +51,8 @@ public class ThreadTest extends Test
     @Override
     protected void perform() throws TestFailed
     {
+    	
+    	System.out.println("Starting ThreadTest");
         // Create the stub.
         try
         {
@@ -73,6 +75,7 @@ public class ThreadTest extends Test
         {
             throw new TestFailed("unable to rendezvous in first thread", t);
         }
+        System.out.println("Done with ThreadTest");
     }
 
     /** Stops the skeleton server. */

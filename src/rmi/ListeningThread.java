@@ -32,7 +32,7 @@ public class ListeningThread<T> implements Runnable{
                 clientSocket = this.serverSocket.accept();
             } catch (IOException e) {
                 if(isStopped()) {
-                    System.out.println("Server Stopped.") ;
+                    log("Server Stopped.") ;
                     return;
                 }
                 throw new RuntimeException(
@@ -43,7 +43,7 @@ public class ListeningThread<T> implements Runnable{
                     clientSocket, obj, skeleton)
             ).start();
         }
-        System.out.println("Server Stopped.") ;
+        log("Server Stopped.") ;
     }
 
 
@@ -67,6 +67,14 @@ public class ListeningThread<T> implements Runnable{
         } catch (IOException e) {
             throw new RuntimeException("Cannot open port 8080", e);
         }
+    }
+    
+    /**
+     * Logs a simple message.  In this case we just write the
+     * message to the server applications standard output.
+     */
+    private void log(String message) {
+        System.out.println("S: " + message);
     }
 
 }

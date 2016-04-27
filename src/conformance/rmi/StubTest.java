@@ -77,6 +77,7 @@ public class StubTest extends Test
     @Override
     protected void perform() throws TestFailed
     {
+    	System.out.println("Starting Stub Test");
     	System.out.println("Test 0");
         ensureUnknownHostRejected();
 
@@ -89,19 +90,20 @@ public class StubTest extends Test
             throw new TestFailed("unable to start dummy skeleton", t);
         }
         
-        //System.out.println("Test 1");
+        System.out.println("Test 1");
         ensureClassRejected();
-        //System.out.println("Test 2");
+        System.out.println("Test 2");
         ensureNonRemoteInterfaceRejected();
-        //System.out.println("Test 3");
+        System.out.println("Test 3");
         ensureNullPointerExceptions();
-        //System.out.println("Test 4");
+        System.out.println("Test 4");
         ensureLocalMethods();
 
         skeleton.stop();
         
-        //System.out.println("Test 5");
+        System.out.println("Test 5");
         ensureStubConnects();
+        System.out.println("Done with Stub Test");
     }
 
     /** Checks that a stub connects to the server for which it was created.

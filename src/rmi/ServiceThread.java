@@ -38,31 +38,41 @@ public class ServiceThread<T> implements Runnable{
             	argsTypes[i] = getOrigClass(args[i].getClass());
             }
             
-            System.out.println("Read objects on server side");
+            log("Read objects on server side");
             Method method = obj.getClass().getMethod(methodName, (Class<?>[]) argsTypes);
-            Object retObj = method.invoke(obj, args);
+            Object retObj = null;
+            Throwable serverException = null;
+			try {
+				retObj = method.invoke(obj, args);
+			} catch (IllegalAccessException e) {
+				serverException = e;
+			}catch (InvocationTargetException e) {
+				serverException = e;
+			}catch (Exception e ) {
+				serverException = e;
+			}
             // call the object with method and find result
             
             ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
           
-            System.out.println("Wrote object on server side");
+            log("Wrote object on server side");
             out.writeObject(retObj);
+            out.writeObject(serverException);
             
         } catch (IOException e) {
+        	
             log("Error handling client : " + e);
+        	e.printStackTrace();
         } catch (ClassNotFoundException e) {
 			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 		} catch (SecurityException e) {
 			e.printStackTrace();
 		} finally {
+			
             try {
                 clientSocket.close();
             } catch (IOException e) {
@@ -89,6 +99,6 @@ public class ServiceThread<T> implements Runnable{
      * message to the server applications standard output.
      */
     private void log(String message) {
-        System.out.println(message);
+        System.out.println("S: " + message);
     }
 }
