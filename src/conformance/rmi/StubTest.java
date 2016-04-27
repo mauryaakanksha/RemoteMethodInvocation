@@ -89,18 +89,18 @@ public class StubTest extends Test
             throw new TestFailed("unable to start dummy skeleton", t);
         }
         
-        System.out.println("Test 1");
+        //System.out.println("Test 1");
         ensureClassRejected();
-        System.out.println("Test 2");
+        //System.out.println("Test 2");
         ensureNonRemoteInterfaceRejected();
-        System.out.println("Test 3");
+        //System.out.println("Test 3");
         ensureNullPointerExceptions();
-        System.out.println("Test 4");
+        //System.out.println("Test 4");
         ensureLocalMethods();
 
         skeleton.stop();
         
-        System.out.println("Test 5");
+        //System.out.println("Test 5");
         ensureStubConnects();
     }
 
@@ -484,6 +484,7 @@ public class StubTest extends Test
         {
             try
             {
+            	System.out.println("Waiting in test thread");
                 Socket  connected = socket.accept();
 
                 try

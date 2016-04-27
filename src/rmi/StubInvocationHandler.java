@@ -27,19 +27,11 @@ public class StubInvocationHandler implements InvocationHandler {
 	    this.c = c;
 	}
 	
-	public Class<?> getClassObj() {
-		return c;
-	}
-	
     
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
-    	if(method.getName().equalsIgnoreCase("getServerAddr")) {
-    		return serverAddr;
-    	} else if(method.getName().equalsIgnoreCase("getC")){
-    		return c;
-    	} else if(method.getName().equalsIgnoreCase("toString") ) {
+    	if(method.getName().equalsIgnoreCase("toString") ) {
     		return "Interface name = " + c.toString() + ", Skeleton address =  " + serverAddr.toString() + "\n"; 
     	} else if(method.getName().equalsIgnoreCase("hashCode") ) {
     		
@@ -71,6 +63,9 @@ public class StubInvocationHandler implements InvocationHandler {
     	
         Socket socket = null;
         
+        if(serverAddr == null) System.out.println("Server address is null! Error!");
+        
+        
         if(serverAddr.getHostName() == null)
         	socket = new Socket(serverAddr.getAddress(), serverAddr.getPort());
         else 
@@ -93,7 +88,8 @@ public class StubInvocationHandler implements InvocationHandler {
             System.out.println("Got result on client side");
             return retVal;
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new RMIException(e);
+			//e.printStackTrace();
 		} finally {
 		    try {
 		        socket.close();
@@ -101,8 +97,6 @@ public class StubInvocationHandler implements InvocationHandler {
 		        System.out.println("Couldn't close a socket, what's going on?");
 		    }
 		}
-        
-        return retVal;
         
     }
 }
