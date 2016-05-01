@@ -1,4 +1,4 @@
-package rmi;
+package unit;
 
 /** Sample class demonstrating unit tests, together with
     <code>SampleUnitTest</code>.

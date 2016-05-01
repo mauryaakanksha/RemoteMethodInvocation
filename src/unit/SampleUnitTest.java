@@ -1,4 +1,4 @@
-package rmi;
+package unit;
 
 import test.*;
 
