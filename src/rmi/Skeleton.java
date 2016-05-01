@@ -181,6 +181,12 @@ public class Skeleton<T>
     		this.address = new InetSocketAddress(port);
     	tcpserver = new ListeningThread(port, obj, this);
     	new Thread(tcpserver).start();
+    	
+    	try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			throw new RMIException("Interrupted while waiting for server to start up");
+		}
     }
 
     /** Stops the skeleton server, if it is already running.

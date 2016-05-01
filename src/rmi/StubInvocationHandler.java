@@ -1,9 +1,9 @@
 package rmi;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -79,16 +79,21 @@ public class StubInvocationHandler implements InvocationHandler {
             Class<?> [] param = method.getParameterTypes();
         	String methodName = method.getName();
             out.writeObject(methodName);
-            out.writeObject(Integer.valueOf(args.length));
-            for ( int i = 0; i< args.length ; i++) {
+            
+            int argsLength = 0;
+            if(args != null) argsLength = args.length;
+            
+            out.writeObject(argsLength);
+            for ( int i = 0; i< argsLength ; i++) {
             	out.writeObject(param[i]);
             }
-            for ( int i = 0; i< args.length ; i++) {
+            for ( int i = 0; i< argsLength ; i++) {
             	out.writeObject(args[i]);
             }
             log("Wrote objects on client side");
             
-
+            out.flush();
+            
             ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
             retVal = in.readObject();
             serverException = (Throwable) in.readObject();
@@ -98,11 +103,17 @@ public class StubInvocationHandler implements InvocationHandler {
             	throw serverException;
             return retVal;
 		} catch (Exception e) {
-			// TODO ensureStubConnects() -- check what's the error if you don't throw RMI exception
-			throw new RMIException(e);
-			//e.printStackTrace();
+			if(serverException != null) {
+				// Exception on the server side, throw as it is
+				throw e;
+			}
+			else {
+				// Exception on stub side 
+				throw new RMIException(e);
+			}
 		} finally {
 		    try {
+		    	socket.shutdownOutput();
 		        socket.close();
 		    } catch (IOException e) {
 		        log("Couldn't close a socket, what's going on?");

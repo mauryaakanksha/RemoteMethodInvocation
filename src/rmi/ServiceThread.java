@@ -27,17 +27,23 @@ public class ServiceThread<T> implements Runnable{
         try {
         	
         	log("New connection with client at " + clientSocket);
+        	ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
+        	out.flush(); 
             ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
 
             String methodName = (String) in.readObject();
             int argsLen = (Integer)in.readObject();
-            Object[] args = new Object[argsLen];
-            Class<?>[] argsTypes = new Class[argsLen];
-            for(int i = 0; i < args.length; i++) {
-            	argsTypes[i] = (Class<?>)in.readObject();
-            }
-            for(int i = 0; i < args.length; i++) {
-            	args[i] = (Object)in.readObject();
+            Object[] args = null;
+            Class<?>[] argsTypes = null;
+            if(argsLen != 0) {
+            	args = new Object[argsLen];
+                argsTypes = new Class[argsLen];
+                for(int i = 0; i < args.length; i++) {
+                	argsTypes[i] = (Class<?>)in.readObject();
+                }
+                for(int i = 0; i < args.length; i++) {
+                	args[i] = (Object)in.readObject();
+                }
             }
             log("Read objects on server side");
             Method method = obj.getClass().getMethod(methodName, (Class<?>[]) argsTypes);
@@ -48,22 +54,23 @@ public class ServiceThread<T> implements Runnable{
 			} catch (IllegalAccessException e) {
 				serverException = e;
 			}catch (InvocationTargetException e) {
-				serverException = e;
+				serverException = e.getCause();
 			}catch (Exception e ) {
 				serverException = e;
 			}
             // call the object with method and find result
             
-            ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
-          
+           
             log("Wrote object on server side");
             out.writeObject(retObj);
             out.writeObject(serverException);
             
         } catch (IOException e) {
         	
-            log("Error handling client : " + e);
-        	e.printStackTrace();
+        	log("Client closed abruptly");
+        	skeleton.service_error(new RMIException(e));
+            //log("Error handling client : " + e);
+        	//e.printStackTrace();
         } catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
@@ -75,6 +82,7 @@ public class ServiceThread<T> implements Runnable{
 		} finally {
 			
             try {
+            	clientSocket.shutdownOutput();
                 clientSocket.close();
             } catch (IOException e) {
                 log("Couldn't close a socket, what's going on?");
@@ -83,18 +91,6 @@ public class ServiceThread<T> implements Runnable{
         }
     }
 
-    private Class getOrigClass(Class t) {
-    	switch (t.getName()) {
-    		case "java.lang.Byte" : return byte.class; 
-    		case "java.lang.Short" : return short.class;
-    		case "java.lang.Integer" : return int.class;
-    		case "java.lang.Float" : return float.class;
-    		case "java.lang.Double" : return double.class;
-    		case "java.lang.Character" : return char.class;
-    		case "java.lang.Boolean" : return boolean.class;
-    		default: return t;
-    	}
-    }
     /**
      * Logs a simple message.  In this case we just write the
      * message to the server applications standard output.
