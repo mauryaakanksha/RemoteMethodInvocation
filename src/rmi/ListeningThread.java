@@ -74,7 +74,7 @@ public class ListeningThread<T> implements Runnable{
      * message to the server applications standard output.
      */
     private void log(String message) {
-        System.out.println("S: " + message);
+        //System.out.println("S: " + message);
     }
 
 }

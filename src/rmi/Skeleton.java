@@ -180,7 +180,9 @@ public class Skeleton<T>
     	else 
     		this.address = new InetSocketAddress(port);
     	tcpserver = new ListeningThread(port, obj, this);
+    	
     	new Thread(tcpserver).start();
+    	
     	
     	try {
 			Thread.sleep(1000);

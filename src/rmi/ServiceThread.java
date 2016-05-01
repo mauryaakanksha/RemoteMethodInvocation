@@ -47,6 +47,7 @@ public class ServiceThread<T> implements Runnable{
             }
             log("Read objects on server side");
             Method method = obj.getClass().getMethod(methodName, (Class<?>[]) argsTypes);
+            method.setAccessible(true);
             Object retObj = null;
             Throwable serverException = null;
 			try {
@@ -67,11 +68,14 @@ public class ServiceThread<T> implements Runnable{
             
         } catch (IOException e) {
         	
-        	log("Client closed abruptly");
+        	log("Exception in service thread. Seems like client closed abruptly");
         	skeleton.service_error(new RMIException(e));
             //log("Error handling client : " + e);
         	//e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch(Exception e) {
+        	log("Exception in service thread");
+        	skeleton.service_error(new RMIException(e));
+        }/*catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
@@ -79,7 +83,7 @@ public class ServiceThread<T> implements Runnable{
 			e.printStackTrace();
 		} catch (SecurityException e) {
 			e.printStackTrace();
-		} finally {
+		}*/ finally {
 			
             try {
             	clientSocket.shutdownOutput();
@@ -96,6 +100,6 @@ public class ServiceThread<T> implements Runnable{
      * message to the server applications standard output.
      */
     private void log(String message) {
-        System.out.println("S: " + message);
+        //System.out.println("S: " + message);
     }
 }

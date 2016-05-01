@@ -124,6 +124,6 @@ public class StubInvocationHandler implements InvocationHandler {
     
     
     private void log(String message) {
-    	         System.out.println("C: " + message);
+    	//System.out.println("C: " + message);
     }
 }
