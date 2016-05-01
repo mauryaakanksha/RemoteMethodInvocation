@@ -1,9 +1,11 @@
 package rmi;
 
+import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -13,7 +15,7 @@ import java.net.Socket;
 /**
  * Invocation handler for the client proxy class
  */
-public class StubInvocationHandler implements InvocationHandler {
+public class StubInvocationHandler implements InvocationHandler,Serializable {
 
     /**
      * Server socket address (hostname, port)
@@ -28,38 +30,46 @@ public class StubInvocationHandler implements InvocationHandler {
 	}
 	
     
-    @Override
+	@Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+		
+		try {
+			Method isPresent = c.getMethod(method.getName(), method.getParameterTypes());
+		} catch(NoSuchMethodException e) {
+			if(method.getName().equalsIgnoreCase("toString")) {
+	    		return "Interface name = " + c.toString() + ", Skeleton address =  " + serverAddr.toString() + "\n"; 
+	    	} else if(method.getName().equalsIgnoreCase("hashCode")) {
+	    		
+	    		int prime = 31;
+	    		int code = prime * serverAddr.hashCode();
+	    		code  += prime * c.hashCode();
+	    		return code;
+	    		
+	    	}else if(method.getName().equalsIgnoreCase("equals") && args.length == 1) {
+	    		Object ob = args[0];
+	    		if(ob == null) return false;
+	    		if(!Proxy.isProxyClass(ob.getClass())) return false;
+	    		InvocationHandler handler = Proxy.getInvocationHandler(ob);
+	    		if( handler instanceof StubInvocationHandler) {
+	    			StubInvocationHandler stubHandler = (StubInvocationHandler) handler;
+	    			
+	    			if ( !stubHandler.c.equals(c) ) {
+	    				return false;
+	    			}
+	    			
+	    			if ( !stubHandler.serverAddr.equals(serverAddr)){
+	    				return false;
+	    			}
+	    			return true;
+	    		}
+	    	   
+	    	    return false;
 
-    	if(method.getName().equalsIgnoreCase("toString") ) {
-    		return "Interface name = " + c.toString() + ", Skeleton address =  " + serverAddr.toString() + "\n"; 
-    	} else if(method.getName().equalsIgnoreCase("hashCode") ) {
-    		
-    		int prime = 31;
-    		int code = prime * serverAddr.hashCode();
-    		code  += prime * c.hashCode();
-    		return code;
-    		
-    	}else if(method.getName().equalsIgnoreCase("equals") && args.length == 1) {
-    		Object ob = args[0];
-    		if(ob == null) return false;
-    		InvocationHandler handler = Proxy.getInvocationHandler(ob);
-    		if( handler instanceof StubInvocationHandler) {
-    			StubInvocationHandler stubHandler = (StubInvocationHandler) handler;
-    			
-    			if ( !stubHandler.c.equals(c) ) {
-    				return false;
-    			}
-    			
-    			if ( !stubHandler.serverAddr.equals(serverAddr)){
-    				return false;
-    			}
-    			return true;
-    		}
-    	   
-    	    return false;
-
-    	}
+	    	} else {
+	    		throw new RMIException("method " + method.getName() + " is not present in interface " + c.getName());
+	    	}
+		}
+    	
     	
         Socket socket = null;
         
@@ -78,6 +88,8 @@ public class StubInvocationHandler implements InvocationHandler {
         	ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             Class<?> [] param = method.getParameterTypes();
         	String methodName = method.getName();
+        	
+        	out.writeObject(c.getName());
             out.writeObject(methodName);
             
             int argsLength = 0;

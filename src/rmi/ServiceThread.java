@@ -30,8 +30,14 @@ public class ServiceThread<T> implements Runnable{
         	ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
         	out.flush(); 
             ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
-
+            
+            String interfaceName = (String) in.readObject();
             String methodName = (String) in.readObject();
+            //Class interfaceObj =   this.getClass().getClassLoader().loadClass(interfaceName);            
+            
+            if(!skeleton.interfaceObj.getName().equalsIgnoreCase(interfaceName)) {
+            	throw new RMIException("Interfaces do not match for skeleton and stub");
+            }
             int argsLen = (Integer)in.readObject();
             Object[] args = null;
             Class<?>[] argsTypes = null;
@@ -46,6 +52,7 @@ public class ServiceThread<T> implements Runnable{
                 }
             }
             log("Read objects on server side");
+            	
             Method method = obj.getClass().getMethod(methodName, (Class<?>[]) argsTypes);
             method.setAccessible(true);
             Object retObj = null;
@@ -72,8 +79,11 @@ public class ServiceThread<T> implements Runnable{
         	skeleton.service_error(new RMIException(e));
             //log("Error handling client : " + e);
         	//e.printStackTrace();
-        } catch(Exception e) {
+        } catch(RMIException e){
+        	skeleton.service_error(e);
+        } catch(Exception e) { 
         	log("Exception in service thread");
+        	if (e instanceof RMIException) 
         	skeleton.service_error(new RMIException(e));
         }/*catch (ClassNotFoundException e) {
 			e.printStackTrace();

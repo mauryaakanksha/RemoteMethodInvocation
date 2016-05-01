@@ -1,7 +1,11 @@
 package rmi;
 
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.rmi.server.UnicastRemoteObject;
+
+import test.TestFailed;
 
 public class NetworkTest {
 	
@@ -47,6 +51,22 @@ public class NetworkTest {
 		System.out.println(val);
 		
 		skeleton.stop();
+		
+		System.out.println("trying serialization");
+		ByteArrayOutputStream byte_stream = new ByteArrayOutputStream();
+		ObjectOutputStream object_stream = null;
+
+		try { 
+			object_stream = new ObjectOutputStream(byte_stream);
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
+
+		try {
+			object_stream.writeObject(client);
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
 	}
 	
 	public static void main(String args[]) throws Exception{

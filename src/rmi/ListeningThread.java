@@ -47,7 +47,7 @@ public class ListeningThread<T> implements Runnable{
     }
 
 
-    private synchronized boolean isStopped() {
+    public synchronized boolean isStopped() {
         return this.isStopped;
     }
 

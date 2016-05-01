@@ -49,7 +49,7 @@ public class ConformanceTests
                          conformance.rmi.ThreadTest.class};
 
         Series                      series = new Series(tests);
-        SeriesReport                report = series.run(3000, System.out);
+        SeriesReport                report = series.run(3, System.out);
 
         // Print the report and exit with an appropriate exit status.
         report.print(System.out);

@@ -49,6 +49,7 @@ public class Skeleton<T>
      */
 	
 	T obj;
+	Class interfaceObj;
 	InetSocketAddress address;
 	ListeningThread<T> tcpserver;
 	
@@ -64,7 +65,7 @@ public class Skeleton<T>
     	
     	
     	this.obj = server;
-      
+    	this.interfaceObj = c;
     }
 
     /** Creates a <code>Skeleton</code> with the given initial server address.
@@ -89,13 +90,14 @@ public class Skeleton<T>
     {
         //throw new UnsupportedOperationException("not implemented");
     	
-    	if (c == null || server == null || address == null) {
-            throw new NullPointerException("Parameter c or server or address is null");
+    	if (c == null || server == null) {
+            throw new NullPointerException("Parameter c or server is null");
         }
 
     	if(!Helper.isRemoteInterface(c)) throw new Error(c.getName() + "is not a remote interface");
     	
     	this.obj = server;
+    	this.interfaceObj = c;
     	this.address = address;
 
     }
@@ -172,7 +174,7 @@ public class Skeleton<T>
         //throw new UnsupportedOperationException("not implemented");
     	
     	
-    	if(tcpserver != null) throw new RMIException("server has already started");
+    	if(tcpserver != null && !tcpserver.isStopped()) throw new RMIException("server has already started");
     	
     	int port = 8080;
     	if(this.address != null) 
@@ -185,7 +187,7 @@ public class Skeleton<T>
     	
     	
     	try {
-			Thread.sleep(1000);
+			Thread.sleep(300);
 		} catch (InterruptedException e) {
 			throw new RMIException("Interrupted while waiting for server to start up");
 		}
@@ -203,7 +205,6 @@ public class Skeleton<T>
     public synchronized void stop()
     {
     	tcpserver.stop();
-    	// tcpserver = null;
         //throw new UnsupportedOperationException("not implemented");
     }
 

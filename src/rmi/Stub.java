@@ -54,7 +54,7 @@ public abstract class Stub
         //throw new UnsupportedOperationException("not implemented");
     	
     	if(skeleton == null || c == null) throw new NullPointerException();
-    	if(skeleton.tcpserver == null) {
+    	if(skeleton.address == null) {
     		throw new IllegalStateException("Skeleton doesn't have an address yet");
     	}
     	if(!c.isInterface()) throw new Error(c.getName() + " is not an interface");
@@ -100,7 +100,7 @@ public abstract class Stub
     {
         //throw new UnsupportedOperationException("not implemented");
     	if(skeleton == null || c == null || hostname == null) throw new NullPointerException();
-    	if(skeleton.tcpserver == null) {
+    	if(skeleton.address == null) {
     		throw new IllegalStateException("Skeleton doesn't have an address yet");
     	}
     	if(!c.isInterface()) throw new Error(c.getName() + " is not an interface");
